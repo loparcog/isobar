@@ -20,6 +20,9 @@ class PStochasticPattern(Pattern):
         self._seed = self.rng.randint(0, sys.maxsize)
         self.rng.seed(self._seed)
 
+    def __str__(self):
+        return "PStochPattern (%s)" % self.__class__
+
     def reset(self):
         super().reset()
         self.rng.seed(self._seed)

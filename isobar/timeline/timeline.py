@@ -248,6 +248,10 @@ class Timeline(object):
             log.info("Timeline: Finished")
             self.running = False
 
+        except KeyboardInterrupt:
+            print(" *** Keyboard Interruption, stopping Timeline")
+            self.running = False
+
         except Exception as e:
             print((" *** Exception in Timeline thread: %s" % e))
             if not self.ignore_exceptions:

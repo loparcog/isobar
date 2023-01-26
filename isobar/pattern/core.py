@@ -260,11 +260,11 @@ class PConstant(Pattern):
         [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         """
 
-    def __init__(self, constant):
+    def __init__(self, constant:int):
         self.constant = constant
 
     def __str__(self):
-        return "constant"
+        return "PConstant: %d" % self.constant
 
     def __next__(self):
         return self.constant
@@ -278,8 +278,11 @@ class PRef(Pattern):
         Useful to change an inner pattern in real time.
         """
 
-    def __init__(self, pattern):
+    def __init__(self, pattern:Pattern):
         self.pattern = pattern
+
+    def __str__(self):
+        return "PRef > %s" % self.pattern.__str__
 
     def set_pattern(self, pattern):
         """ Replace the referenced pattern with another. """
@@ -296,8 +299,11 @@ class PFunc(Pattern):
         >>> p.nextn(16)
         [19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19]"""
 
-    def __init__(self, function):
+    def __init__(self, function:callable):
         self.function = function
+
+    def __str__(self):
+        return "PFunc: %s" % self.function
 
     def __next__(self):
         function = Pattern.value(self.function)
@@ -308,9 +314,12 @@ class PArrayIndex(Pattern):
         If the item is a Pattern, the next value from that pattern is returned.
         """
 
-    def __init__(self, list, index):
+    def __init__(self, list: list, index: int):
         self.list = list
         self.index = index
+
+    def __str__(self):
+        return "PArray Index: [%s], index = %d" % (",".join(str(x) for x in self.list),self.index)
 
     def __next__(self):
         list = Pattern.value(self.list)
@@ -357,6 +366,9 @@ class PDict(Pattern):
                     self.dict[key] = PSequence([item[key] for item in value], 1)
             except IndexError:
                 pass
+
+    def __str__(self):
+        print("PDict: %s" % self.dict)
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -437,6 +449,9 @@ class PDictKey(Pattern):
         self.dict = dict
         self.key = key
 
+    def __str__(self):
+        return "PDictKey: %s, key = %s" % (self.dict, self.key)
+
     def __next__(self):
         vdict = Pattern.value(self.dict)
         vkey = Pattern.value(self.key)
@@ -449,9 +464,12 @@ class PConcatenate(Pattern):
         [1, 2, 3, 1, 2, 3, 9, 8, 7, 9, 8, 7]
         """
 
-    def __init__(self, inputs):
+    def __init__(self, inputs: list):
         self.inputs = inputs
         self.pos = 0
+
+    def __str__(self):
+        return "PConcatenate: [%s]" % (",".join(str(x) for x in self.inputs))
 
     def __next__(self):
         try:
@@ -471,8 +489,11 @@ class PConcatenate(Pattern):
 class PAbs(Pattern):
     """ PAbs: Absolute value of `input` """
 
-    def __init__(self, input):
+    def __init__(self, input:float):
         self.input = input
+
+    def __str__(self):
+        return "PAbs: %d" % self.input
 
     def __next__(self):
         next = Pattern.value(self.input)
@@ -485,6 +506,9 @@ class PInt(Pattern):
 
     def __init__(self, input):
         self.input = input
+
+    def __str__(self):
+        return "PInt: %s" % str(self.input)
 
     def __next__(self):
         next = Pattern.value(self.input)

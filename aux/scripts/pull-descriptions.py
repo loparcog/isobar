@@ -17,16 +17,20 @@ args = parser.parse_args()
 # Get all pattern files, excluding __init__'s
 pattern_files = list(sorted(glob.glob("isobar/pattern/[!_]*.py", recursive=True)))
 
-classnames = []
-classdescs = []
-
 for fname in pattern_files:
-    print(fname)
+    # Output file name
+    basename = os.path.basename(fname)
+    if args.markdown:
+        print("## %s" % basename[:-3].title())
+        print("View source: [%s](https://github.com/ideoforms/isobar/tree/master/isobar/pattern/%s)\n" % (basename, basename))
+    else:
+        print("    %s (%s)" % (basename[:-3].title(), basename))
 
     contents = open(fname, "r").read()
 
     # Regex for a class and its description
-    cmatch = re.search('class\s[^"]*"""((?!""").)*"""', contents, re.S)
+    classregex = 'class\s[\w():]*\s+"""((?!""").)*"""'
+    cmatch = re.search(classregex, contents, re.S)
 
     # Loop through for each class in the file
     while cmatch != None:
@@ -35,10 +39,13 @@ for fname in pattern_files:
         # Format whitespace for easier output
         desc = re.sub("\n[^\S\r\n]+", " ", desc)
         desc = re.sub("\n\s","\n", desc).strip()
-        classnames.append(name)
-        classdescs.append(desc)
+
+        print(name)
+        print(desc)
+        print()
         # Crop this section out, look for a new match
         contents = contents[cmatch.end():]
-        cmatch = re.search('class\s[^"]*"""((?!""").)*"""', contents, re.S)
+        cmatch = re.search(classregex, contents, re.S)
 
-# Format and print all class names into markdown
+    # Class seperator
+    print("---\n")

@@ -28,8 +28,7 @@ for fname in pattern_files:
 
     contents = open(fname, "r").read()
 
-    # Regex for a class and its description
-    classregex = 'class\s[\w():]*\s+"""((?!""").)*"""'
+    classregex = 'class\s[\w():]+\s+"""((?!""").)*"""'
     cmatch = re.search(classregex, contents, re.S)
 
     # Loop through for each class in the file
@@ -40,7 +39,10 @@ for fname in pattern_files:
         desc = re.sub("\n[^\S\r\n]+", " ", desc)
         desc = re.sub("\n\s","\n", desc).strip()
 
-        print(name)
+        if args.markdown:
+            print("### %s\n" % name)
+        else:
+            print(name)
         print(desc)
         print()
         # Crop this section out, look for a new match

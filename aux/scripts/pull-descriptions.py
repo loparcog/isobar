@@ -18,13 +18,13 @@ args = parser.parse_args()
 pattern_files = list(sorted(glob.glob("isobar/pattern/[!_]*.py", recursive=True)))
 
 for fname in pattern_files:
-    # Output file name
+    # Output file name (DEPRICATED, done by generate-docs)
     basename = os.path.basename(fname)
-    if args.markdown:
-        print("## %s" % basename[:-3].title())
-        print("View source: [%s](https://github.com/ideoforms/isobar/tree/master/isobar/pattern/%s)\n" % (basename, basename))
-    else:
-        print("    %s (%s)" % (basename[:-3].title(), basename))
+    #if args.markdown:
+    #    print("## %s" % basename[:-3].title())
+    #    print("View source: [%s](https://github.com/ideoforms/isobar/tree/master/isobar/pattern/%s)\n" % (basename, basename))
+    #else:
+    #    print("    %s (%s)" % (basename[:-3].title(), basename))
 
     contents = open(fname, "r").read()
 
@@ -40,14 +40,22 @@ for fname in pattern_files:
         desc = re.sub("\n\s","\n", desc).strip()
 
         if args.markdown:
-            print("### %s\n" % name)
+            # Gather all information
+            mdContent = []
+            mdContent.append("## %s\n" % name)
+            mdContent.append(desc)
+            # Output to a file
+            newfile = open("zzz/%s.md" % (name), "w")
+            newfile.write("\n".join(mdContent))
+            newfile.close()
         else:
             print(name)
-        print(desc)
-        print()
+            print(desc)
+            print()
         # Crop this section out, look for a new match
         contents = contents[cmatch.end():]
         cmatch = re.search(classregex, contents, re.S)
 
     # Class seperator
-    print("---\n")
+    if not args.markdown:
+        print("---\n")
